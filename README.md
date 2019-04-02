@@ -2,4 +2,4 @@
 
 *Semana de repaso*
 
-Dia1 - Loops, array methods (.map, .forEach, .filter, .reduce, ...)
+dia1 - Loops, array methods (.map, .forEach, .filter, .reduce, ...)
