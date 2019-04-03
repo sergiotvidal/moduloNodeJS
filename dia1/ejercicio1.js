@@ -1,15 +1,3 @@
-// función que retorne si menor que 5 mal, entre 5 y 8 bien y mayor que 8 perfecto
-
-//pirámide de números 1, 12, 123, ... cada línea en un array
-
-//cambiar el array abc, transformar las letras en mayúsculas
-
-const ARROZ = '🌾';
-const CARNE = '🥩';
-const LECHE = '🥛';
-const TOMATE = '🍅';
-const ingredientes = [ARROZ, CARNE, LECHE, TOMATE];
-
 /**
  * Función que prepara un alimento a partir de un ingrediente, conviertiendo:
  *  ingrediente arroz a pan
@@ -19,6 +7,13 @@ const ingredientes = [ARROZ, CARNE, LECHE, TOMATE];
  * @param {String} ingrediente [ARROZ, CARNE, LECHE, TOMATE]
  * @return {String} comida Devuelve el alimento procesado
  */
+
+const ARROZ = '🌾';
+const CARNE = '🥩';
+const LECHE = '🥛';
+const TOMATE = '🍅';
+const ingredientes = [ARROZ, CARNE, LECHE, TOMATE];
+
 function prepare(ingrediente) {
   const pan = '🍞';
   const bacon = '🥓';
