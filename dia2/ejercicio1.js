@@ -1,4 +1,4 @@
-// ejemplo de asincronía
+// ejemplo de asincronía utilizando callbacks
 
 function timer(callback) {
     console.log('X');
