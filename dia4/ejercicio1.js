@@ -1,0 +1,1 @@
+// hacer el timer con async/await
