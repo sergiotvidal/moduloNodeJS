@@ -2,10 +2,20 @@
 
 *Semana de repaso*
 
-dia1 - if/else, loops, array methods (.map, .forEach, .filter, .reduce, ...).
+- if/else, loops, array methods (.map, .forEach, .filter, .reduce, ...).
 
-dia2 - callbacks
+- callbacks
 
-dia3 - promises
+- promises
 
-dia4 - async/await
+- async/await
+
+*empezar API REST*
+
+- programación modular
+
+- envío de información por headers, query params o en el body
+
+- métodos http get, post, put, patch, delete
+
+- express.js y módulos npm
