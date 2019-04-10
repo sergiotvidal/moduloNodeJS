@@ -1,0 +1,12 @@
+crear carpeta del proyecto, en este caso 'test'
+
+dentro de la carpeta test, 'npm init -y' (este -y es para decirle que si a todo)
+
+crear el archivo de inicio index.js
+
+'npm install express --save' para instalar express.js en el entorno del proyecto
+
+'npm install mongoose' para instalar el mongoose en el proyecto
+
+crear carpeta de config, para definir la conexión y crear carpeta de models, para definir los modelos/esquemas
+
