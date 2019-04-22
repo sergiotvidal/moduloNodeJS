@@ -18,4 +18,6 @@
 
 - métodos http get, post, put, patch, delete
 
-- express.js y módulos npm
+- express.js y módulos npm 
+
+- router

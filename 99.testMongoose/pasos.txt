@@ -10,3 +10,4 @@ crear el archivo de inicio index.js
 
 crear carpeta de config, para definir la conexión y crear carpeta de models, para definir los modelos/esquemas
 
+create.persona en el index, ver que agrega los datos a la base de datos

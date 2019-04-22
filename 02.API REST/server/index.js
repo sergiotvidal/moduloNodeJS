@@ -11,22 +11,37 @@ const dividir = require('./calculadora/dividir.js')
 const app = express();
 const port = 3000;
 
-// app.use(function (req, res, next) {
-//     const n = Date.now();
-//     req.now = n; // crea un atributo en el objeto req, accesible en todo el documento
-//     res.set('x-initial-time', n); // crea un header con el nombre x-initial... y el valor n 
-//     next();
-// });
+
+/*
+* Queremos hacer una ruta usando el objeto de express Router
+*
+* /v2/calculadora/sumar
+* /v2/calculadora/restar
+*/
+
+const miRouter = express.Router();
+miRouter.get('/calculadora/suma', (req, res, next) => {
+    return res.send('sumar');
+});
+
+miRouter.get('calculadora/resta', function(req, res, next) {
+    return res.send('restar');
+});
+
+app.use('/v2', miRouter);
+
+
+
 
 app.use(function (req, res, next) {
     const n = Date.now();
-    req.now = n; // crea un atributo en el objeto req, accesible en todo el documento
-    res.set('x-initial-time', n); // crea un header con el nombre x-initial... y el valor n 
+    // req.now = n; // crea un atributo en el objeto req, accesible en todo el documento
+    res.set('x-initial-time', n); // crea un header con el nombre x-initial-time y valor n 
 
     // creo un método para req, para que antes de obtener las responses en los endpoints se llame a esta función, que calculará el tiempo que se ha pasado en el backend
     req.diffCalc = function diffCalc() {
         const y = Date.now();
-        const diff = y - req.now;
+        const diff = y - n;
         res.set('x-diff-time', diff);
     }
     next();
@@ -79,7 +94,14 @@ app.post('/calculadora/resta', (req, res) => {
         resultado
     };
 
+    // método para obtener el tiempo de estancia en el backend (solo funciona para este endpoint)
+    // const y = Date.now();
+    // const diff = y - req.now;
+    // res.set('x-diff-time', diff);
+
+    // aquí llamo a una función creada específicamente para el cálculo del tiempo en el backend que se puede llamar desde cualquier endpoint del documento
     req.diffCalc();
+
     res.send(respuesta);
 });
 
@@ -105,7 +127,7 @@ app.get('/calculadora/multiplica', (req, res) => {
 });
 
 
-app.post('/calculadora/dividir', (req, res) => {
+app.post('/calculadora/dividir', (req, res, next) => {
     const {
         n1,
         n2
@@ -121,8 +143,20 @@ app.post('/calculadora/dividir', (req, res) => {
         resultado
     };
     
-    req.diffCalc();
-    res.send(respuesta);
+    // req.diffCalc();
+    req.respuesta = respuesta
+    next();
 });
+
+app.use((req, res) => {
+    const actualDate = Date.now();
+    const dateDifference = actualDate - req.now;
+    const dateDif = {
+      dateDifference
+    };
+    res.set("x-diff-time", dateDifference);
+
+    res.send({ resp: req.respuesta, dateDif });
+  });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
