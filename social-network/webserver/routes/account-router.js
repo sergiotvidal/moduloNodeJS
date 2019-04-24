@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint-disable max-len */
+
 const bcrypt = require('bcrypt');
 const express = require('express');
 const Joi = require('joi');
@@ -34,7 +36,7 @@ async function addVerificationCode(uuid) {
   });
 
   connection.release();
-  
+
   return verificationCode;
 }
 
@@ -56,7 +58,7 @@ async function sendEmailRegistration(userEmail, verificationCode) {
   return data;
 }
 
-async function createAccount(req, res, next) {
+async function createAccount(req, res) {
   const accountData = req.body;
   try {
     await validateSchema(accountData);
@@ -68,7 +70,7 @@ async function createAccount(req, res, next) {
   // Generamos un uuid v4
   // Miramos la fecha actual created_at
   // Calculamos hash de la pass que nos pasan para almacenarla de   forma segura (instalar paquetes uuid y bcrypt)
-  // 
+  //
 
   const now = new Date();
   const securePassword = await bcrypt.hash(accountData.password, 10);
@@ -87,6 +89,7 @@ async function createAccount(req, res, next) {
       created_at: createdAt,
     });
     connection.release();
+    console.log(resultado);
 
     const verificationCode = await addVerificationCode(uuid);
 
@@ -102,6 +105,34 @@ async function createAccount(req, res, next) {
   }
 }
 
-router.post('/account', createAccount);
+async function activateAccount(req, res) {
+  const { verification_code: verificationCode } = req.query;
+  const connection = await mysqlPool.getConnection();
 
+  const sqlQuery = 'SELECT * FROM users_activation WHERE verification_code = ?';
+
+  try {
+    const [resultado] = await connection.query(sqlQuery, verificationCode);
+
+    const now = new Date();
+    const verificationDate = now.toISOString().substring(0, 19).replace('T', ' ');
+
+    const sqlUpdate = `UPDATE users_activation SET verified_at = ? WHERE verification_code = '${verificationCode}'`;
+    await connection.query(sqlUpdate, [verificationDate]);
+
+    const sqlUpdate2 = `UPDATE users SET verified_at = ? WHERE uuid = '${resultado[0].user_uuid}'`;
+    await connection.query(sqlUpdate2, [verificationDate]);
+    connection.release();
+
+    return res.status(201).send();
+  } catch (e) {
+    if (connection) {
+      connection.release();
+    }
+    return res.status(500).send(e.message);
+  }
+}
+
+router.post('/account', createAccount);
+router.get('/account/activate', activateAccount);
 module.exports = router;

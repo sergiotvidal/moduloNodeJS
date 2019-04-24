@@ -11,6 +11,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use('/api', routers.accountRouter);
+app.use('/api', routers.loginRouter);
 
 async function init() {
   try {
