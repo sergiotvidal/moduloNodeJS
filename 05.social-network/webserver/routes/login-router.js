@@ -110,10 +110,7 @@ function feedController(req, res) {
       res.status(403).send();
     }
 
-    res.json({
-      text: 'users feed',
-      html: data,
-    });
+    res.status(202).send();
   });
 }
 
