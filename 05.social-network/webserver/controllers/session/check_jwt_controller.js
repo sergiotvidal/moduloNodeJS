@@ -18,7 +18,7 @@ function tokenChecker(req, res, next) {
       return res.status(403).send('Invalid token');
     }
 
-    next();
+    return next();
   });
 }
 
