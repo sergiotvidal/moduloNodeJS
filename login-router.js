@@ -6,7 +6,8 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
-const mysqlPool = require('../../databases/mysql-pool');
+const atob = require('atob');
+const mysqlPool = require('./05.social-network/databases/mysql-pool');
 
 const router = express.Router();
 
@@ -31,6 +32,8 @@ async function loginUser(req, res) {
   const loginData = req.body;
 
   const { email, password } = req.body;
+
+  // CHECK DE LOS DATOS
 
   try {
     await validateSchema(loginData);
@@ -87,13 +90,13 @@ async function loginUser(req, res) {
   }
 }
 
-// Crear un middleware tokenChecker que compuebe que el token ha sido enviado en un header por el cliente que hace la request
+// Crear un middleware tokenChecker que compuebe que el token ha sido enviado en un header por el cliente que hace una request
 
 function tokenChecker(req, res, next) {
   const bearerHeader = req.headers.authorization;
 
   if (typeof bearerHeader === 'undefined') {
-    res.status(403).res();
+    res.status(403).send('Authorization denied');
   }
 
   const bearer = bearerHeader.split(' ');
@@ -104,17 +107,21 @@ function tokenChecker(req, res, next) {
 
 // Crear el endpoint al que se te redirige después de hacer el login
 
-function feedController(req, res) {
-  jwt.verify(req.token, process.env.JWT_PASSWORD, (err, data) => {
+function profileController(req, res) {
+  jwt.verify(req.token, process.env.JWT_PASSWORD, (err) => {
     if (err) {
-      res.status(403).send();
+      return res.status(403).send('Invalid token');
     }
 
-    res.status(202).send();
+    const splitToken = req.token.split('.');
+    const decodedData = atob(splitToken[1]).split(',');
+    const cleanUuid = decodedData[0].replace(/["{]/g, '').replace(':', ': ');
+
+    return res.status(202).send(`Access granted! This is your ${cleanUuid}`);
   });
 }
 
 router.post('/login', loginUser);
-router.get('/user/feed', tokenChecker, feedController);
+router.get('/profile', tokenChecker, profileController);
 
 module.exports = router;

@@ -6,12 +6,11 @@ const express = require('express');
 const routers = require('./webserver/routes/index');
 const mysqlPool = require('./databases/mysql-pool');
 
-
 const app = express();
 app.use(bodyParser.json());
 
 app.use('/api', routers.accountRouter);
-app.use('/api', routers.loginRouter);
+app.use('/api', routers.userRouter);
 
 async function init() {
   try {

@@ -1,9 +1,9 @@
 'use strict';
 
 const accountRouter = require('./account-router');
-const loginRouter = require('./login-router');
+const userRouter = require('./user-router');
 
 module.exports = {
   accountRouter,
-  loginRouter,
+  userRouter,
 };
