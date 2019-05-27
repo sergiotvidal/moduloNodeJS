@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 'use strict';
 
 const bcrypt = require('bcrypt');
@@ -5,6 +7,8 @@ const Joi = require('joi');
 const uuidV4 = require('uuid/v4');
 const sendgridMail = require('@sendgrid/mail');
 const mysqlPool = require('../../../databases/mysql-pool');
+const WallModel = require('../../../models/wall_model');
+const UserModel = require('../../../models/user_model');
 
 sendgridMail.setApiKey(process.env.SENGRID_API_KEY);
 
@@ -15,6 +19,37 @@ async function validateSchema(payload) {
   };
 
   return Joi.validate(payload, schema);
+}
+
+async function createWall(uuid) {
+  const data = {
+    uuid,
+    posts: [],
+  };
+
+  const wall = await WallModel.create(data);
+
+  return wall;
+}
+
+async function createProfile(uuid) {
+  const data = {
+    uuid,
+    friends: [],
+    avatarUrl: null,
+    fullName: null,
+    preferences: {
+      isPublicProfile: false,
+      linkedIn: null,
+      twitter: null,
+      github: null,
+      description: null,
+    },
+  };
+
+  const profileCreated = await UserModel.create(data);
+
+  return profileCreated;
 }
 
 async function addVerificationCode(uuid) {
@@ -84,11 +119,12 @@ async function createAccount(req, res) {
       created_at: createdAt,
     });
     connection.release();
-    console.log(resultado);
+
 
     const verificationCode = await addVerificationCode(uuid);
-
     await sendEmailRegistration(accountData.email, verificationCode);
+    await createWall(uuid);
+    await createProfile(uuid);
 
     return res.status(201).send();
   } catch (e) {
